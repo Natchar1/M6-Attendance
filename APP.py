@@ -8,12 +8,12 @@ import numpy as np
 # ตั้งค่าการเชื่อมต่อกับ Google Sheets
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
          "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("C:/Users/Dell/Desktop/APP/M6_A/m6stdattendance-8b44fcb49a31.json", scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name("m6stdattendance-8b44fcb49a31.json", scope)
 client = gspread.authorize(creds)
 sheet = client.open("M6_Attendance").sheet1
 
 # อ่านข้อมูลนักเรียน
-df_students = pd.read_excel("C:/Users/Dell/Desktop/APP/M6_A/name list/M6_std_namelist.xlsx")
+df_students = pd.read_excel("M6_std_namelist.xlsx")
 df_students.drop(columns=['แผน', 'Gifted'], inplace=True)
 
 # Streamlit app
