@@ -33,14 +33,18 @@ for index, row in students_in_class.iterrows():
     late_status = cols[1].checkbox("Late", key=f"Late_{index}")
     absent_status = cols[2].checkbox("Absent", key=f"Absent_{index}")
 
+    # ป้องกันไม่ให้ late และ absent ถูก check พร้อมกัน
     if late_status and absent_status:
-        cols[2].checkbox("Absent", value=False, key=f"Absent_{index}")
+        st.warning("คุณไม่สามารถเลือก 'Late' และ 'Absent' พร้อมกันได้!")
+        late_status = False
+        absent_status = False
 
     attendance = 'Late' if late_status else ('Absent' if absent_status else '')
 
     # บันทึกข้อมูลเฉพาะเมื่อเลือกตัวเลือกสายหรือขาด
     if attendance:
         attendance_data.append([datetime.now().strftime('%Y-%m-%d'), selected_class, row['เลขที่'], row['เลขประจำตัว'], row['ชื่อ'],row['นามสกุล'], attendance])
+
 
 if st.button("บันทึก"):
     for record in attendance_data:
