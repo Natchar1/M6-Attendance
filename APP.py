@@ -34,11 +34,8 @@ for index, row in students_in_class.iterrows():
     absent_status = cols[2].checkbox("Absent", key=f"Absent_{index}")
 
     # ป้องกันไม่ให้ late และ absent ถูก check พร้อมกัน
-    if late_status and absent_status:
-        st.warning("คุณไม่สามารถเลือก 'Late' และ 'Absent' พร้อมกันได้!")
-        late_status = False
-        absent_status = False
-
+    if late_status:
+       absent_status = False
     attendance = 'Late' if late_status else ('Absent' if absent_status else '')
 
     # บันทึกข้อมูลเฉพาะเมื่อเลือกตัวเลือกสายหรือขาด
