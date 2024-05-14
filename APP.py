@@ -13,7 +13,7 @@ client = gspread.authorize(creds)
 sheet = client.open("M6_Attendance").sheet1
 
 # อ่านข้อมูลนักเรียน
-df_students = pd.read_excel("M6_std_namelist2.xlsx")
+df_students = pd.read_excel("M6_std_namelist3.xlsx")
 df_students.drop(columns=['แผน', 'Gifted'], inplace=True)
 
 # Streamlit app
