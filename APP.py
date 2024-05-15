@@ -31,7 +31,7 @@ students_in_class = df_students[df_students['ห้อง'] == selected_class]
 attendance_data = []
 
 for index, row in students_in_class.iterrows():
-    cols = st.columns([4, 1, 1, 1, 3])  # Adjusted column widths to accommodate more space for labels
+    cols = st.columns([3, 1, 1, 1, 1])  # Adjusted column widths to accommodate more space for labels
     with cols[0]:
         st.write(f"{row['เลขที่']} {row['เลขประจำตัว']} {row['คำนำหน้า']} {row['ชื่อ']} {row['นามสกุล']}")
 
