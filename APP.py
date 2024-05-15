@@ -17,7 +17,7 @@ df_students = pd.read_excel("M6_std_namelist.xlsx")
 df_students.drop(columns=['แผน', 'Gifted'], inplace=True)
 
 # Streamlit app
-st.title('M6 Attendance (เช็กแถว)')
+st.title('M6 Attendance')
 
 # เลือกห้อง
 selected_class = st.selectbox('เลือกห้อง', df_students['ห้อง'].unique())
@@ -30,12 +30,29 @@ for index, row in students_in_class.iterrows():
     cols = st.columns([3, 1, 1, 1, 1])
     cols[0].text(f"{row['เลขที่']} {row['เลขประจำตัว']} {row['คำนำหน้า']} {row['ชื่อ']} {row['นามสกุล']}")
 
-    late_status = cols[1].checkbox("Late", key=f"Late_{index}")
-    absent_status = cols[2].checkbox("Absent", key=f"Absent_{index}")
-    other_status = cols[3].checkbox("Other", key=f"Other_{index}")
+    late_key = f"Late_{index}"
+    absent_key = f"Absent_{index}"
+    other_key = f"Other_{index}"
+    details_key = f"Details_{index}"
 
+    late_status = cols[1].checkbox("Late", key=late_key, value=st.session_state.get(late_key, False))
+    absent_status = cols[2].checkbox("Absent", key=absent_key, value=st.session_state.get(absent_key, False))
+    other_status = cols[3].checkbox("Other", key=other_key, value=st.session_state.get(other_key, False))
+
+    # Clear other checkboxes when one is checked
+    if st.session_state[late_key]:
+        st.session_state[absent_key] = False
+        st.session_state[other_key] = False
+    elif st.session_state[absent_key]:
+        st.session_state[late_key] = False
+        st.session_state[other_key] = False
+    elif st.session_state[other_key]:
+        st.session_state[late_key] = False
+        st.session_state[absent_key] = False
+
+    other_details = ""
     if other_status:
-        other_details = cols[0].text_input("Specify reason", key=f"Details_{index}", placeholder="Enter reason here...")
+        other_details = cols[0].text_input("Specify reason", key=details_key, placeholder="Enter reason here...")
 
     attendance = 'Late' if late_status else ('Absent' if absent_status else ('Other' if other_status else ''))
     reason = other_details if other_status else ''
