@@ -31,7 +31,7 @@ students_in_class = df_students[df_students['ห้อง'] == selected_class]
 attendance_data = []
 
 for index, row in students_in_class.iterrows():
-    cols = st.columns([4, 0.8, 0.8, 0.8, 1.6], gap="small")  # Adjust column widths and gap
+    cols = st.columns([4, 1, 1, 1, 3])  # Adjusted column widths to accommodate more space for labels
     with cols[0]:
         st.write(f"{row['เลขที่']} {row['เลขประจำตัว']} {row['คำนำหน้า']} {row['ชื่อ']} {row['นามสกุล']}")
 
@@ -39,9 +39,9 @@ for index, row in students_in_class.iterrows():
     absent_status = cols[2].checkbox("Absent", key=f"Absent_{index}")
     other_status = cols[3].checkbox("Other", key=f"Other_{index}")
 
+    # Text input field appears below the checkboxes
     if other_status:
-        with cols[4]:  # Start from under "Other"
-            other_details = st.text_input("Specify reason", key=f"Details_{index}", placeholder="Enter reason here...")
+        other_details = st.text_input("Specify reason", key=f"Details_{index}", placeholder="Enter reason here...")
 
     attendance = 'Late' if late_status else ('Absent' if absent_status else ('Other' if other_status else ''))
     reason = other_details if other_status else ''
