@@ -34,16 +34,19 @@ for index, row in students_in_class.iterrows():
     absent_status = cols[2].checkbox("Absent", key=f"Absent_{index}")
     other_status = cols[3].checkbox("Other", key=f"Other_{index}")
 
-    # Update the state only when a checkbox is activated to prevent conflicts
+    # Update state based on user interaction
     if st.session_state[f"Late_{index}"]:
-        st.session_state[f"Absent_{index}"] = False
-        st.session_state[f"Other_{index}"] = False
+        if absent_status or other_status:
+            st.session_state[f"Absent_{index}"] = False
+            st.session_state[f"Other_{index}"] = False
     elif st.session_state[f"Absent_{index}"]:
-        st.session_state[f"Late_{index}"] = False
-        st.session_state[f"Other_{index}"] = False
+        if late_status or other_status:
+            st.session_state[f"Late_{index}"] = False
+            st.session_state[f"Other_{index}"] = False
     elif st.session_state[f"Other_{index}"]:
-        st.session_state[f"Late_{index}"] = False
-        st.session_state[f"Absent_{index}"] = False
+        if late_status or absent_status:
+            st.session_state[f"Late_{index}"] = False
+            st.session_state[f"Absent_{index}"] = False
 
     other_details = ""
     if other_status:
@@ -53,7 +56,7 @@ for index, row in students_in_class.iterrows():
 
     # บันทึกข้อมูลเฉพาะเมื่อเลือกตัวเลือกสายหรือขาด
     if attendance:
-        attendance_data.append([datetime.now().strftime('%Y-%m-%d'), selected_class, row['เลขที่'], row['เลขประจำตัว'], row['ชื่อ'],row['นามสกุล'], attendance])
+        attendance_data.append([datetime.now().strftime('%Y-%m-%d'), selected_class, row['เลขที่'], row['เลขประจำตัว'], row['ชื่อ'], row['นามสกุล'], attendance])
 
 if st.button("บันทึก"):
     for record in attendance_data:
