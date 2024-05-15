@@ -17,7 +17,7 @@ df_students = pd.read_excel("M6_std_namelist.xlsx")
 df_students.drop(columns=['แผน', 'Gifted'], inplace=True)
 
 # Streamlit app
-st.title('M6 Attendance')
+st.title('M6 Attendance(เช็กแถว)')
 
 # เลือกห้อง
 selected_class = st.selectbox('เลือกห้อง', df_students['ห้อง'].unique())
@@ -27,21 +27,26 @@ students_in_class = df_students[df_students['ห้อง'] == selected_class]
 attendance_data = []
 
 for index, row in students_in_class.iterrows():
-    cols = st.columns([4, 1, 1, 1, 2])
-    with cols[0]:
-        st.write(f"{row['เลขที่']} {row['เลขประจำตัว']} {row['คำนำหน้า']} {row['ชื่อ']} {row['นามสกุล']}")
-    option = st.radio("Status", ["Late", "Absent", "Other"], key=f"status_{index}")
+    cols = st.columns([3, 1, 1, 1, 1])
+    cols[0].text(f"{row['เลขที่']} {row['เลขประจำตัว']} {row['คำนำหน้า']} {row['ชื่อ']} {row['นามสกุล']}")
 
-    other_details = ""
-    if option == "Other":
-        other_details = st.text_input("Specify reason", key=f"Details_{index}")
+    late_status = cols[1].checkbox("Late", key=f"Late_{index}")
+    absent_status = cols[2].checkbox("Absent", key=f"Absent_{index}")
+    other_status = cols[3].checkbox("Other", key=f"Other_{index}")
 
-    if option:
-        attendance_data.append([datetime.now().strftime('%Y-%m-%d'), selected_class, row['เลขที่'], row['เลขประจำตัว'], row['ชื่อ'], row['นามสกุล'], option, other_details if option == "Other" else ''])
+    if other_status:
+        other_details = cols[0].text_input("Specify reason", key=f"Details_{index}", placeholder="Enter reason here...")
 
-if st.button("Save"):
+    attendance = 'Late' if late_status else ('Absent' if absent_status else ('Other' if other_status else ''))
+    reason = other_details if other_status else ''
+
+    # บันทึกข้อมูลเฉพาะเมื่อเลือกตัวเลือกสายหรือขาด
+    if attendance:
+        attendance_data.append([datetime.now().strftime('%Y-%m-%d'), selected_class, row['เลขที่'], row['เลขประจำตัว'], row['ชื่อ'], row['นามสกุล'], attendance, reason])
+
+if st.button("บันทึก"):
     for record in attendance_data:
+        # Convert all int64 values to int and append reason
         sanitized_record = [int(item) if isinstance(item, (np.int64, pd.Int64Dtype)) else item for item in record]
         sheet.append_row(sanitized_record)
-    st.success("Data saved successfully!")
-    st.experimental_rerun()
+    st.success("บันทึกข้อมูลเรียบร้อยแล้ว!")
