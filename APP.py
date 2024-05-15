@@ -27,29 +27,17 @@ students_in_class = df_students[df_students['ห้อง'] == selected_class]
 attendance_data = []
 
 for index, row in students_in_class.iterrows():
-    cols = st.columns([3, 1, 1, 1, 1])
-    cols[0].text(f"{row['เลขที่']} {row['เลขประจำตัว']} {row['คำนำหน้า']} {row['ชื่อ']} {row['นามสกุล']}")
+    cols = st.columns([4, 1, 1, 1, 2])
+    with cols[0]:
+        st.write(f"{row['เลขที่']} {row['เลขประจำตัว']} {row['คำนำหน้า']} {row['ชื่อ']} {row['นามสกุล']}")
+    option = st.radio("Status", ["Late", "Absent", "Other"], key=f"status_{index}")
 
-    checkbox_state = {
-        'Late': st.checkbox("Late", key=f"Late_{index}"),
-        'Absent': st.checkbox("Absent", key=f"Absent_{index}"),
-        'Other': st.checkbox("Other", key=f"Other_{index}")
-    }
+    other_details = ""
+    if option == "Other":
+        other_details = st.text_input("Specify reason", key=f"Details_{index}")
 
-    selected = [k for k, v in checkbox_state.items() if v]
-    if len(selected) > 1:
-        st.warning('Please select only one option.')
-        checkbox_state[selected[0]] = False
-        for state in selected[1:]:
-            st.session_state[f"{state}_{index}"] = False
-
-    other_details = st.text_input("Specify reason", key=f"Details_{index}", placeholder="Enter reason here...") if checkbox_state['Other'] else ""
-
-    attendance = selected[0] if selected else ''
-    reason = other_details if checkbox_state['Other'] else ''
-
-    if attendance:
-        attendance_data.append([datetime.now().strftime('%Y-%m-%d'), selected_class, row['เลขที่'], row['เลขประจำตัว'], row['ชื่อ'], row['นามสกุล'], attendance, reason])
+    if option:
+        attendance_data.append([datetime.now().strftime('%Y-%m-%d'), selected_class, row['เลขที่'], row['เลขประจำตัว'], row['ชื่อ'], row['นามสกุล'], option, other_details if option == "Other" else ''])
 
 if st.button("Save"):
     for record in attendance_data:
