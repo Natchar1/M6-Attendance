@@ -34,14 +34,14 @@ for index, row in students_in_class.iterrows():
     absent_status = cols[2].checkbox("Absent", key=f"Absent_{index}")
     other_status = cols[3].checkbox("Other", key=f"Other_{index}")
 
-    # ป้องกันไม่ให้ late, absent และ other ถูก check พร้อมกัน
-    if late_status:
+    # Update the state only when a checkbox is activated to prevent conflicts
+    if st.session_state[f"Late_{index}"]:
         st.session_state[f"Absent_{index}"] = False
         st.session_state[f"Other_{index}"] = False
-    elif absent_status:
+    elif st.session_state[f"Absent_{index}"]:
         st.session_state[f"Late_{index}"] = False
         st.session_state[f"Other_{index}"] = False
-    elif other_status:
+    elif st.session_state[f"Other_{index}"]:
         st.session_state[f"Late_{index}"] = False
         st.session_state[f"Absent_{index}"] = False
 
