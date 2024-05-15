@@ -12,11 +12,15 @@ creds = ServiceAccountCredentials.from_json_keyfile_name("m6stdattendance-8b44fc
 client = gspread.authorize(creds)
 sheet = client.open("M6_Attendance").sheet1
 
-# อ่านข้อมูลนักเรียน
-df_students = pd.read_excel("M6_std_namelist.xlsx")
+# ฟังก์ชันโหลดข้อมูลที่ใช้ cache
+@st.experimental_memo
+def load_data(file):
+    return pd.read_excel(file)
+
+df_students = load_data("M6_std_namelist.xlsx")
 df_students.drop(columns=['แผน', 'Gifted'], inplace=True)
 
-# Streamlit app
+# ส่วนหัวของ Streamlit app
 st.title('M6 Attendance(เช็กแถว)')
 
 # เลือกห้อง
@@ -35,18 +39,18 @@ for index, row in students_in_class.iterrows():
     other_status = cols[3].checkbox("Other", key=f"Other_{index}")
 
     if other_status:
-        other_details = cols[0].text_input("Specify reason", key=f"Details_{index}", placeholder="Enter reason here...")
+        other_details = cols[4].text_input("Specify reason", key=f"Details_{index}", placeholder="Enter reason here...")
 
     attendance = 'Late' if late_status else ('Absent' if absent_status else ('Other' if other_status else ''))
     reason = other_details if other_status else ''
 
-    # บันทึกข้อมูลเฉพาะเมื่อเลือกตัวเลือกสายหรือขาด
     if attendance:
         attendance_data.append([datetime.now().strftime('%Y-%m-%d'), selected_class, row['เลขที่'], row['เลขประจำตัว'], row['ชื่อ'], row['นามสกุล'], attendance, reason])
 
 if st.button("บันทึก"):
     for record in attendance_data:
-        # Convert all int64 values to int and append reason
         sanitized_record = [int(item) if isinstance(item, (np.int64, pd.Int64Dtype)) else item for item in record]
         sheet.append_row(sanitized_record)
     st.success("บันทึกข้อมูลเรียบร้อยแล้ว!")
+    st.experimental_memo.clear()  # Clear all cached data
+    st.experimental_rerun()  # Optionally rerun the app to refresh the state
