@@ -17,7 +17,7 @@ df_students = pd.read_excel("M6_std_namelist.xlsx")
 df_students.drop(columns=['แผน', 'Gifted'], inplace=True)
 
 # Streamlit app
-st.title('M6 Attendance')
+st.title('M6 Attendance (เช็กแถว)')
 
 # เลือกห้อง
 selected_class = st.selectbox('เลือกห้อง', df_students['ห้อง'].unique())
