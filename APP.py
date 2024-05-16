@@ -54,6 +54,6 @@ if st.button("บันทึก"):
         sanitized_record = [int(item) if isinstance(item, (np.int64, pd.Int64Dtype)) else item for item in record]
         sheet.append_row(sanitized_record)
     st.success("บันทึกข้อมูลเรียบร้อยแล้ว!")
-    time.sleep(5)  # Wait for 5 seconds before clearing cache and rerunning
+    time.sleep(10)  # Wait for 5 seconds before clearing cache and rerunning
     st.experimental_memo.clear()  # Clear all cached data
     st.experimental_rerun()  # Optionally rerun the app to refresh the state
