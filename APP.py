@@ -14,7 +14,7 @@ client = gspread.authorize(creds)
 sheet = client.open("M6_Attendance").sheet1
 
 # ฟังก์ชันโหลดข้อมูลที่ใช้ cache
-@st.experimental_memo
+@st.cache_data
 def load_data(file):
     return pd.read_excel(file)
 
@@ -54,6 +54,6 @@ if st.button("บันทึก"):
         sanitized_record = [int(item) if isinstance(item, (np.int64, pd.Int64Dtype)) else item for item in record]
         sheet.append_row(sanitized_record)
     st.success("บันทึกข้อมูลเรียบร้อยแล้ว!")
-    time.sleep(10)  # Wait for 5 seconds before clearing cache and rerunning
-    st.experimental_memo.clear()  # Clear all cached data
+    time.sleep(10)  # Wait for 10 seconds before clearing cache and rerunning
+    st.cache_data.clear()  # Clear all cached data
     st.experimental_rerun()  # Optionally rerun the app to refresh the state
