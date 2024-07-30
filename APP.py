@@ -56,4 +56,6 @@ if st.button("บันทึก"):
     st.success("บันทึกข้อมูลเรียบร้อยแล้ว!")
     time.sleep(10)  # Wait for 10 seconds before clearing cache and rerunning
     st.cache_data.clear()  # Clear all cached data
-    st.experimental_rerun()  # Optionally rerun the app to refresh the state
+    
+    # Set a query parameter to force a refresh
+    st.experimental_set_query_params(rerun=1)
